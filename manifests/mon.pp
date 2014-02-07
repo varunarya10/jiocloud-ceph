@@ -50,7 +50,13 @@ define ceph::mon (
 --create-keyring \
 --name=mon. \
 --add-key='${monitor_secret}' \
---cap mon 'allow *'",
+--cap mon 'allow *'; \ 
+ceph-authtool /var/lib/ceph/tmp/keyring.mon.${name} \
+--name=client.admin \
+--add-key='{monitor_secret}' \
+--cap mon 'allow *' \
+--cap osd 'allow *' \
+--cap mds 'allow *'",
     creates => "/var/lib/ceph/tmp/keyring.mon.${name}",
     before  => Exec['ceph-mon-mkfs'],
     require => Package['ceph'],

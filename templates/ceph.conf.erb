@@ -46,10 +46,12 @@
   mon data = <%= @mon_data %>
 
 [osd]
-  osd journal size = <%= @journal_size_mb %>
   filestore flusher = false
   osd data = <%= @osd_data %>
+<% if @osd_journal_type == 'filesystem' -%>
   osd journal = <%= @osd_journal_real %>
+  osd journal size = <%= @journal_size_mb %>
+<% end -%>
   osd mkfs type = xfs
   keyring = <%= @osd_data %>/keyring
 

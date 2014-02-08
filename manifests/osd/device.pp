@@ -17,6 +17,8 @@
 #
 
 define ceph::osd::device (
+	$osd_journal_type	= 'filesystem',
+	$osd_journal_size 	= 1
 ) {
 
   include ceph::osd
@@ -31,20 +33,47 @@ define ceph::osd::device (
     require => Package['parted']
   }
 
-  exec { "mkpart_${devname}":
-    command => "parted -a optimal -s ${name} mkpart ceph 0% 100%",
-    unless  => "parted ${name} print | egrep '^ 1.*ceph$'",
-    require => [Package['parted'], Exec["mktable_gpt_${devname}"]]
-  }
+  if $osd_journal_type == 'first_partition' {
+    exec { "mkpart_journal_${devname}":
+         command => "parted -a optimal -s ${name} mkpart ceph_journal 0GiB ${osd_journal_size}GiB",
+         unless  => "parted ${name} print | egrep '^ 1.*ceph_journal$'",
+         require => [Package['parted'], Exec["mktable_gpt_${devname}"]]
+    }
+    exec { "mkpart_${devname}":
+    	command => "parted -a optimal -s ${name} mkpart ceph ${osd_journal_size}GiB 100%",
+    	unless  => "parted ${name} print | egrep '^ 2.*ceph$'",
+    	require => [Package['parted'], Exec["mktable_gpt_${devname}"], Exec["mkpart_journal_${devname}"]]
+    }
+    exec { "mkfs_${devname}":
+    	command => "mkfs.xfs -f -d agcount=${::processorcount} -l \
+size=1024m -n size=64k ${name}2",
+    	unless  => "xfs_admin -l ${name}2",
+    	require => [Package['xfsprogs'], Exec["mkpart_${devname}"]],
+    }
+    
+    $blkid_uuid_fact = "blkid_uuid_${devname}2"
+    $osd_id_fact = "ceph_osd_id_${devname}2"
+    $osd_data_device_name = "${name}2"
+    $osd_journal_device_name = "${name}1"
+  } elsif $osd_journal_type == 'filesystem' {
 
-  exec { "mkfs_${devname}":
-    command => "mkfs.xfs -f -d agcount=${::processorcount} -l \
+    exec { "mkpart_${devname}":
+    	command => "parted -a optimal -s ${name} mkpart ceph 0% 100%",
+    	unless  => "parted ${name} print | egrep '^ 1.*ceph$'",
+    	require => [Package['parted'], Exec["mktable_gpt_${devname}"]]
+    }
+
+    exec { "mkfs_${devname}":
+      command => "mkfs.xfs -f -d agcount=${::processorcount} -l \
 size=1024m -n size=64k ${name}1",
-    unless  => "xfs_admin -l ${name}1",
-    require => [Package['xfsprogs'], Exec["mkpart_${devname}"]],
-  }
+      unless  => "xfs_admin -l ${name}1",
+      require => [Package['xfsprogs'], Exec["mkpart_${devname}"]],
+    }
 
-  $blkid_uuid_fact = "blkid_uuid_${devname}1"
+    $blkid_uuid_fact = "blkid_uuid_${devname}1"
+    $osd_id_fact = "ceph_osd_id_${devname}1"
+    $osd_data_device_name = "${name}1"
+  }
   notify { "BLKID FACT ${devname}: ${blkid_uuid_fact}": }
   $blkid = inline_template('<%= scope.lookupvar(blkid_uuid_fact) or "undefined" %>')
   notify { "BLKID ${devname}: ${blkid}": }
@@ -56,7 +85,6 @@ size=1024m -n size=64k ${name}1",
       require => Ceph::Key['admin'],
     }
 
-    $osd_id_fact = "ceph_osd_id_${devname}1"
     notify { "OSD ID FACT ${devname}: ${osd_id_fact}": }
     $osd_id = inline_template('<%= scope.lookupvar(osd_id_fact) or "undefined" %>')
     notify { "OSD ID ${devname}: ${osd_id}":}
@@ -64,7 +92,9 @@ size=1024m -n size=64k ${name}1",
     if $osd_id != 'undefined' {
 
       ceph::conf::osd { $osd_id:
-        device       => $name,
+        device       => $osd_data_device_name,
+	journal_type	=> $osd_journal_type,
+	journal_device	=> $osd_journal_device_name,
         cluster_addr => $::ceph::osd::cluster_address,
         public_addr  => $::ceph::osd::public_address,
       }
@@ -87,7 +117,7 @@ size=1024m -n size=64k ${name}1",
 
       mount { $osd_data:
         ensure  => mounted,
-        device  => "${name}1",
+        device  => "$osd_data_device_name",
         atboot  => true,
         fstype  => 'xfs',
         options => 'rw,noatime,inode64',

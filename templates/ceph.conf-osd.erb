@@ -1,6 +1,9 @@
 [osd.<%= @name %>]
    host = <%= @hostname %>
-   devs = <%= @device %>1
+   devs = <%= @device %>
+<% if @osd_journal_type == 'first_partition' -%>
+  osd journal = <%= @journal_device %>
+<% end -%>
 <% if @cluster_addr -%>
    cluster addr = <%= @cluster_addr %>
 <% end -%>

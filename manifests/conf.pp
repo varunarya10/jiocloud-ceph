@@ -39,11 +39,12 @@ class ceph::conf (
   $mon_init_members        = undef,
   $osd_data                = '/var/lib/ceph/osd/ceph-$id',
   $osd_journal             = undef,
+  $osd_journal_type	   = 'filesystem',
   $mds_data                = '/var/lib/ceph/mds/ceph-$id'
 ) {
 
   include 'ceph::package'
-
+ 
   if $osd_journal {
     $osd_journal_real = $osd_journal
   } else {

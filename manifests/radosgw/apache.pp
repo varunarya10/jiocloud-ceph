@@ -39,6 +39,7 @@ class ceph::radosgw::apache (
   include ceph::radosgw::params
   include ::apache
   include ::apache::mod::fastcgi
+  include apache::mod::rewrite
 
 
   Package['radosgw'] -> Package[$::ceph::radosgw::params::http_service]
@@ -65,16 +66,14 @@ class ceph::radosgw::apache (
     }
   }
 
-  if  $fastcgi_ext_script_source != undef {
     file { $fastcgi_ext_script:
         ensure        => file,
-        owner         => $::ceph::radosgw::params::apache_user,
+        owner         => root,
         group         => $::ceph::radosgw::params::apache_group,
-        mode          => 640,
-        source        => $fastcgi_ext_script_source,
+        mode          => 750,
+	content	  	=> "#!/bin/sh\nexec /usr/bin/radosgw -c /etc/ceph/ceph.conf -n client.radosgw.gateway",
         before  => File[$::ceph::radosgw::params::httpd_config_file],
     }
-  }
 
   if  $radosgw_key_file_source != undef {
     file { $radosgw_key_file:

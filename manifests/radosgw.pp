@@ -65,4 +65,19 @@ class ceph::radosgw (
     }
   }
 
+exec { 'ceph-radosgw-key':
+    command => "ceph-authtool $keyring \
+--name=client.radosgw.gateway \
+--add-key \
+$(ceph --name client.admin --keyring $keyring \
+  auth get-or-create-key client.radosgw.gateway \
+    mon 'allow r' \
+    osd 'allow rwx' )",
+#    creates => '/etc/ceph/keyring',
+    require => Package['radosgw'],
+    unless  => "ceph auth list | egrep 'client.radosgw.gateway'",
+  }
+
+
+
 }

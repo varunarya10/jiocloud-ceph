@@ -24,8 +24,8 @@ class ceph::radosgw::params {
             $apache_group          = 'www-data'
         }
         default: {
-            $apache_user           = 'radosgw'
-            $apache_group          = 'radosgw'
+            $apache_user           = 'www-data'
+            $apache_group          = 'www-data'
         }
       }
     }

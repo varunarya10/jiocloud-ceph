@@ -75,7 +75,7 @@ $(ceph --name client.admin --keyring $keyring \
     osd 'allow rwx' )",
 #    creates => '/etc/ceph/keyring',
     require => Package['radosgw'],
-    unless  => "ceph auth list | egrep 'client.radosgw.gateway'",
+    unless  => "egrep 'client.radosgw.gateway' $keyring",
   }
 
 

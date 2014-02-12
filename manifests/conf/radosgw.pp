@@ -43,9 +43,6 @@ define ceph::conf::radosgw (
     content => template('ceph/ceph.conf-radosgw.erb'),
   }
 
- file { '/tmp/ceph_radosgw':
-	content = "hello",
-}
 
   keystone_service { $auth_name:
     ensure      => present,

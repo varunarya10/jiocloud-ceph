@@ -15,6 +15,12 @@
 #
 #
 class ceph::radosgw (
+  $keystone_url,
+  $keystone_admin_token,
+  $keystone_accepted_roles = 'Member, admin, swiftoperator',
+  $keystone_token_cache_size = 500,
+  $keystone_revocation_interval = 600,
+  $nss_db_path = '/var/lib/ceph/nss',
   $package_ensure = 'present',
   $configure_apache        = true,
   $bind_address            = '0.0.0.0',
@@ -42,6 +48,12 @@ class ceph::radosgw (
     keyring  	=> $keyring,
     socket 	=> $socket,
     logfile	=> $logfile,
+    keystone_url => $keystone_url,
+    keystone_admin_token => $keystone_admin_token,
+    keystone_accepted_roles => $keystone_accepted_roles,
+    keystone_token_cache_size => $keystone_token_cache_size,
+    keystone_revocation_interval => $keystone_revocation_interval,
+    nss_db_path => $nss_db_path,
   }
 
   package { 'radosgw':

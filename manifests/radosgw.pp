@@ -63,14 +63,6 @@ class ceph::radosgw (
     keystone_token_cache_size => $keystone_token_cache_size,
     keystone_revocation_interval => $keystone_revocation_interval,
     nss_db_path => $nss_db_path,
-    region            =>  $region,
-    public_protocol   => $public_protocol,
-    public_address    => $public_address,
-    public_port       => $public_port,
-    admin_protocol    => $admin_protocol,
-    admin_address     => $admin_address,
-    internal_protocol => $internal_protocol,
-    internal_address  => $internal_address
   }
 
   package { 'radosgw':

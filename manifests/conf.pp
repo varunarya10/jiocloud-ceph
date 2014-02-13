@@ -21,7 +21,8 @@
 # Copyright 2012 eNovance <licensing@enovance.com>
 #
 class ceph::conf (
-  $fsid = 'test',
+#  $fsid = '392a9e9b-f499-43d8-b784-3db9e870cbf5',
+  $fsid,
   $auth_type               = 'cephx',
   $signatures_require      = undef,
   $signatures_cluster      = undef,

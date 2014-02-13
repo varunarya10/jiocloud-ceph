@@ -43,7 +43,7 @@ class ceph::radosgw::apache (
 
 
   Package['radosgw'] -> Package[$::ceph::radosgw::params::http_service]
-#  File[$::ceph::radosgw::params::httpd_config_file] ~> Service[$::ceph::radosgw::params::http_service]
+  File[$::ceph::radosgw::params::httpd_config_file] ~> Service[$::ceph::radosgw::params::http_service]
 
  # file { $log_dir:
  #   ensure  => directory,

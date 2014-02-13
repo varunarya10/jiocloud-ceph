@@ -38,8 +38,8 @@ class ceph::radosgw (
   $radosgw_ca_file   = undef,
   $radosgw_ca_file_source   = undef,
   $logfile		= '/var/log/ceph/radosgw',
-  $keyring	= '/etc/ceph/keyring',  
-
+  $keyring	= '/etc/ceph/keyring',   
+  $radosgw_keyring = '/etc/ceph/keyring.radosgw.gateway',
   $region            = 'RegionOne',
   $public_protocol   = 'http',
   $public_address    = '127.0.0.1',
@@ -51,10 +51,12 @@ class ceph::radosgw (
  
 ) {
 
+  Exec['ceph-radosgw-key'] ~> Service['radosgw']
+
   include 'ceph::conf'
 
   ceph::conf::radosgw { $name:
-    keyring  	=> $keyring,
+    keyring  	=> $radosgw_keyring,
     socket 	=> $socket,
     logfile	=> $logfile,
     keystone_url => $keystone_url,
@@ -64,6 +66,7 @@ class ceph::radosgw (
     keystone_revocation_interval => $keystone_revocation_interval,
     nss_db_path => $nss_db_path,
   }
+  
 
   package { 'radosgw':
     ensure => $package_ensure
@@ -81,24 +84,29 @@ class ceph::radosgw (
       radosgw_ca_file_source   => $radosgw_ca_file_source,
       serveradmin_email 	=> $serveradmin_email,
       fastcgi_ext_script	=> $fastcgi_ext_script,
-      fastcgi_ext_socket	=> $fastcgi_ext_socket,
+      fastcgi_ext_socket	=> $socket,
       fastcgi_ext_script_source	=> $fastcgi_ext_script_source,
     }
   }
 
 exec { 'ceph-radosgw-key':
-    command => "ceph-authtool $keyring \
+    command => "ceph-authtool --create-keyring /etc/ceph/keyring.radosgw.gateway; ceph-authtool $radosgw_keyring \
 --name=client.radosgw.gateway \
 --add-key \
 $(ceph --name client.admin --keyring $keyring \
   auth get-or-create-key client.radosgw.gateway \
-    mon 'allow r' \
-    osd 'allow rwx' )",
+    mon 'allow rw' \
+    osd 'allow rwx' ); chmod a+r $radosgw_keyring",
 #    creates => '/etc/ceph/keyring',
     require => Package['radosgw'],
-    unless  => "egrep 'client.radosgw.gateway' $keyring",
+    unless  => "egrep 'client.radosgw.gateway' $radosgw_keyring",
   }
 
-
+  service { 'radosgw':
+	ensure     => 'running',
+	enable	   => true,
+	hasstatus => true,
+	hasrestart => true,
+  }
 
 }

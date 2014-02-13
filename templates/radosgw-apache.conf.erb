@@ -1,8 +1,8 @@
-FastCgiExternalServer <%= @fastcgi_ext_script %> -socket <%= @fastcgi_ext_socket %>
 <VirtualHost *:80>
         ServerName <%= @fqdn %>
         ServerAdmin <%= @serveradmin_email %>
         DocumentRoot /var/www
+	FastCgiExternalServer <%= @fastcgi_ext_script %> -socket <%= @fastcgi_ext_socket %>
 	RewriteEngine On
 	<% if @listen_ssl -%>
 	RewriteCond %{HTTPS} off

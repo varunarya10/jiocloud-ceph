@@ -16,6 +16,7 @@ define ceph::conf::radosgw (
     target  => '/etc/ceph/ceph.conf',
     order   => '70',
     content => template('ceph/ceph.conf-radosgw.erb'),
+    notify => Service['radosgw'],
   }
 
 

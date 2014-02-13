@@ -53,7 +53,7 @@ class ceph::radosgw (
 
   Exec['ceph-radosgw-key'] ~> Service['radosgw']
 
-  include 'ceph::conf'
+  #include 'ceph::conf'
 
   ceph::conf::radosgw { $name:
     keyring  	=> $radosgw_keyring,
@@ -90,7 +90,7 @@ class ceph::radosgw (
   }
 
 exec { 'ceph-radosgw-key':
-    command => "ceph-authtool --create-keyring /etc/ceph/keyring.radosgw.gateway; ceph-authtool $radosgw_keyring \
+    command => "ceph-authtool --create-keyring $radosgw_keyring; ceph-authtool $radosgw_keyring \
 --name=client.radosgw.gateway \
 --add-key \
 $(ceph --name client.admin --keyring $keyring \

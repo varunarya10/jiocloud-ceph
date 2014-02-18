@@ -97,7 +97,6 @@ $(ceph --name client.admin --keyring $keyring \
   auth get-or-create-key client.radosgw.gateway \
     mon 'allow rw' \
     osd 'allow rwx' ); chmod a+r $radosgw_keyring",
-#    creates => '/etc/ceph/keyring',
     require => Package['radosgw'],
     unless  => "egrep 'client.radosgw.gateway' $radosgw_keyring",
   }

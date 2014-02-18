@@ -12,6 +12,7 @@ define ceph::conf::radosgw (
   $logfile = '/var/log/ceph/radosgw.log',
 ) {
 
+
   concat::fragment { "ceph-radosgw-${name}.conf":
     target  => '/etc/ceph/ceph.conf',
     order   => '70',

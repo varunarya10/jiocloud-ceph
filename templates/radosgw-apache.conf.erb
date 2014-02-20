@@ -21,7 +21,7 @@
 </IfModule>
 </VirtualHost>
 <% if @listen_ssl -%>
-
+Listen 443
 <IfModule mod_ssl.c>
 <VirtualHost *:443>
 	ServerAdmin <%= @serveradmin_email %>
@@ -43,7 +43,7 @@
 	SSLCertificateKeyFile <%= @radosgw_key_file %>
     	<% end -%>
 	<% if @radosgw_ca_file -%>
-	SSLCACertificateFile  <%= @radosgw_ca_file %>
+	SSLCertificateChainFile  <%= @radosgw_ca_file %>
 	<% end -%>
 	<FilesMatch "\.(cgi|shtml|phtml|php)$">
 		SSLOptions +StdEnvVars

@@ -110,15 +110,15 @@ class ceph::radosgw::apache (
   if $listen_ssl {
     include apache::mod::ssl
 
-    if $radosgw_ca == undef {
+    if $radosgw_ca_file == undef {
       fail('The radosgw_ca parameter is required when listen_ssl is true')
     }
 
-    if $radosgw_cert == undef {
+    if $radosgw_cert_file == undef {
       fail('The radosgw_cert parameter is required when listen_ssl is true')
     }
 
-    if $radosgw_key == undef {
+    if $radosgw_key_file == undef {
       fail('The radosgw_key parameter is required when listen_ssl is true')
     }
 

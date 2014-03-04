@@ -106,7 +106,8 @@ class ceph::radosgw::apache (
     mode    => '0644',
     require => Package['radosgw']
   }
-
+  include apache::mod::proxy
+  include apache::mod::proxy_http
   if $listen_ssl {
     include apache::mod::ssl
 

@@ -41,7 +41,7 @@ class ceph::radosgw::apache (
   include ceph::radosgw::params
   class {'::apache':
 	package_ensure => $radosgw_apache_version,
-	apache_version => inline_template("<%= scope.lookupvar(@radosgw_apache_version).sub(/(\d+)\.(\d+)\..*/,'\1.\2') %>"),
+	apache_version => inline_template("<%= scope.lookupvar('::ceph::radosgw::apache::radosgw_apache_version').sub(/(\d+)\.(\d+)\..*/,'\1.\2') %>"),
   }
   include ::apache::mod::fastcgi
   include apache::mod::rewrite

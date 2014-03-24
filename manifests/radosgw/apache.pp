@@ -34,11 +34,13 @@ class ceph::radosgw::apache (
   $radosgw_key_file_source  = undef,
   $radosgw_ca_file   = undef,
   $radosgw_ca_file_source   = undef,
+  $radosgw_apache_version = '2.2.22-2precise.ceph',
+  $radosgw_apache_deps = undef,
 ) {
 
   include ceph::radosgw::params
   class {'::apache':
-	package_ensure => '2.2.22-2precise.ceph',
+	package_ensure => $radosgw_apache_version,
   }
   include ::apache::mod::fastcgi
   include apache::mod::rewrite
@@ -46,6 +48,10 @@ class ceph::radosgw::apache (
 
   Package['radosgw'] -> Package[$::ceph::radosgw::params::http_service]
   File[$::ceph::radosgw::params::httpd_config_file] ~> Service[$::ceph::radosgw::params::http_service]
+
+  package { $radosgw_apache_deps:
+    ensure => $radosgw_apache_version,
+  }
 
  # file { $log_dir:
  #   ensure  => directory,

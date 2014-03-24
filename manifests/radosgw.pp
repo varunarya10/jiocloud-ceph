@@ -47,8 +47,9 @@ class ceph::radosgw (
   $admin_protocol    = 'http',
   $admin_address     = undef,
   $internal_protocol = 'http',
-  $internal_address  = undef
- 
+  $internal_address  = undef,
+  radosgw_apache_version = '2.2.22-2precise.ceph',
+  radosgw_apache_deps = undef,
 ) {
 
   Exec['ceph-radosgw-key'] ~> Service['radosgw']
@@ -86,6 +87,8 @@ class ceph::radosgw (
       fastcgi_ext_script	=> $fastcgi_ext_script,
       fastcgi_ext_socket	=> $socket,
       fastcgi_ext_script_source	=> $fastcgi_ext_script_source,
+      radosgw_apache_version	=> $radosgw_apache_version,
+      radosgw_apache_deps	=> $radosgw_apache_deps
     }
   }
 

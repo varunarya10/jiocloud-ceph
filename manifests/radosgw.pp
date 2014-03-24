@@ -48,7 +48,7 @@ class ceph::radosgw (
   $admin_address     = undef,
   $internal_protocol = 'http',
   $internal_address  = undef,
-  radosgw_apache_version = '2.2.22-2precise.ceph',
+  $radosgw_apache_version = '2.2.22-2precise.ceph',
   radosgw_apache_deps = undef,
 ) {
 

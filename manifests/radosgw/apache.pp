@@ -37,7 +37,9 @@ class ceph::radosgw::apache (
 ) {
 
   include ceph::radosgw::params
-  include ::apache
+  class {'::apache':
+	package_ensure = '2.2.22-2precise.ceph'
+  }
   include ::apache::mod::fastcgi
   include apache::mod::rewrite
 

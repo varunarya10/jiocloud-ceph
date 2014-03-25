@@ -74,7 +74,7 @@ size=1024m -n size=64k ${name}1",
     $osd_id_fact = "ceph_osd_id_${devname}1"
     $osd_data_device_name = "${name}1"
   }
-  notify { "BLKID FACT ${devname}: ${blkid_uuid_fact}": }
+  notify { "BLKID FACT ${osd_data_device_name}: ${blkid_uuid_fact}": }
   $blkid = inline_template('<%= scope.lookupvar(blkid_uuid_fact) or "undefined" %>')
   notify { "BLKID ${devname}: ${blkid}": }
 

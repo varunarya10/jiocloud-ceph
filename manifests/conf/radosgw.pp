@@ -12,6 +12,7 @@ define ceph::conf::radosgw (
   $logfile = '/var/log/ceph/radosgw.log',
 ) {
 
+  Concat::fragment["ceph-radosgw-${name}.conf"] ~> Service['radosgw']
 
   concat::fragment { "ceph-radosgw-${name}.conf":
     target  => '/etc/ceph/ceph.conf',

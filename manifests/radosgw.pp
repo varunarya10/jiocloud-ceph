@@ -108,6 +108,7 @@ $(ceph --name client.admin --keyring $keyring \
 	ensure     => 'running',
 	enable	   => true,
 	hasstatus => true,
+	provider  => "init",
 	hasrestart => true,
   }
 

@@ -9,4 +9,6 @@
 	rgw keystone token cache size = <%= @keystone_token_cache_size %>
 	rgw keystone revocation interval = <%= @keystone_revocation_interval %>
 	rgw s3 auth use keystone = true
+        <%- if @ceph_radosgw_listen_ssl %>
 	nss db path	= <%= @nss_db_path %>
+  	<%- end %>

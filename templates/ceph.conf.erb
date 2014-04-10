@@ -37,6 +37,8 @@
   osd pool default crush rule = <%= @pool_default_crush_rule %>
 <% end -%>
 
+mon osd min down reporters = 22
+
   fsid = <%= @fsid %>
 
 [mon]

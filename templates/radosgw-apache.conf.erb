@@ -27,6 +27,10 @@ Listen 443
 	ServerAdmin <%= @serveradmin_email %>
 	DocumentRoot /var/www
 	RewriteEngine On
+	RewriteCond %{HTTP:X-Auth-Token} !^$
+        RewriteCond %{REQUEST_URI} !^(/swift/v1.*)
+        RewriteCond %{REQUEST_URI} !^(/s3gw.fcgi.*)
+        RewriteRule (.*)        /swift/v1%{REQUEST_URI} [P,L]
 	RewriteRule ^/([a-zA-Z0-9-_.]*)([/]?.*) /s3gw.fcgi?page=$1&params=$2&%{QUERY_STRING} [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
 	<Directory />
 		Options FollowSymLinks

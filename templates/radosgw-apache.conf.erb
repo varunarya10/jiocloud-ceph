@@ -40,6 +40,7 @@ Listen 443
 	LogLevel warn
 	CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
 	SSLEngine on
+ 	SSLProxyEngine on
 	<% if @radosgw_cert_file -%>
 	SSLCertificateFile    <%= @radosgw_cert_file %>
 	<% end -%>

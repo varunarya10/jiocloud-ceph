@@ -72,6 +72,7 @@ class ceph::radosgw::apache (
   	mode          => 640,
   	source        => $radosgw_cert_file_source,
 	before  => File[$::ceph::radosgw::params::httpd_config_file],
+	notify  => Service['httpd'],
     }
   }
 
@@ -82,6 +83,7 @@ class ceph::radosgw::apache (
         mode          => 750,
 	content	  	=> "#!/bin/sh\nexec /usr/bin/radosgw -c /etc/ceph/ceph.conf -n client.radosgw.gateway",
         before  => File[$::ceph::radosgw::params::httpd_config_file],
+	notify  => Service['httpd'],
     }
 
   if  $radosgw_key_file_source != undef {
@@ -92,6 +94,7 @@ class ceph::radosgw::apache (
         mode          => 640,
         source        => $radosgw_key_file_source,
 	before  => File[$::ceph::radosgw::params::httpd_config_file],
+	notify  => Service['httpd'],
     }
   }
 
@@ -103,6 +106,7 @@ class ceph::radosgw::apache (
         mode          	=> 640,
         source         	=> $radosgw_ca_file_source,
 	before  	=> File[$::ceph::radosgw::params::httpd_config_file],
+	notify  => Service['httpd'],
     }
   }
 
@@ -113,7 +117,8 @@ class ceph::radosgw::apache (
     content => template('ceph/radosgw-apache.conf.erb'),
     before  => Service[$::ceph::radosgw::params::http_service],
     mode    => '0644',
-    require => Package['radosgw']
+    require => Package['radosgw'],
+    notify  => Service['httpd'],
   }
   include apache::mod::proxy
   include apache::mod::proxy_http

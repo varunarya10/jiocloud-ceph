@@ -34,15 +34,19 @@ class ceph::radosgw::apache (
   $radosgw_key_file_source  = undef,
   $radosgw_ca_file   = undef,
   $radosgw_ca_file_source   = undef,
-  $radosgw_apache_version = '2.2.22-2precise.ceph',
-  $radosgw_apache_deps = undef,
+  $radosgw_apache_version = '2.2',
 ) {
 
   include ceph::radosgw::params
-  ensure_resource('package',$radosgw_apache_deps,{ensure => $radosgw_apache_version})
+  apt::pin { 'ceph_packages':
+    priority => '900',
+    packages => '*apache2*',
+    originator => 'InkTank',
+    ensure => present,
+  }
+  ->
   class {'::apache':
-	package_ensure => $radosgw_apache_version,
-	apache_version => inline_template("<%= @radosgw_apache_version.sub(/(\d+)\.(\d+)\..*/,'\1.\2') %>")
+    apache_version => $radosgw_apache_version,
   }
   include ::apache::mod::fastcgi
   include apache::mod::rewrite

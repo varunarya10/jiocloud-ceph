@@ -39,9 +39,10 @@ class ceph::radosgw::apache (
 ) {
 
   include ceph::radosgw::params
+  ensure_resource('package',$radosgw_apache_deps,{ensure => $radosgw_apache_version})
   class {'::apache':
 	package_ensure => $radosgw_apache_version,
-	apache_version => inline_template("<%= scope.lookupvar('::ceph::radosgw::apache::radosgw_apache_version').sub(/(\d+)\.(\d+)\..*/,'\1.\2') %>"),
+	apache_version => inline_template("<%= @radosgw_apache_version.sub(/(\d+)\.(\d+)\..*/,'\1.\2') %>")
   }
   include ::apache::mod::fastcgi
   include apache::mod::rewrite
@@ -49,10 +50,10 @@ class ceph::radosgw::apache (
 
   Package['radosgw'] -> Package[$::ceph::radosgw::params::http_service]
   File[$::ceph::radosgw::params::httpd_config_file] ~> Service[$::ceph::radosgw::params::http_service]
-
-  package { $radosgw_apache_deps:
-    ensure => $radosgw_apache_version,
-  }
+  
+#  package { $radosgw_apache_deps:
+#    ensure => $radosgw_apache_version,
+#  }
 
  # file { $log_dir:
  #   ensure  => directory,

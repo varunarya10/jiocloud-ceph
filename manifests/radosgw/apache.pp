@@ -68,19 +68,6 @@ class ceph::radosgw::apache (
  #   require => Package['radosgw']
  # }
 
-##FIXME: NEED TO CHECK THE FILE existance,
-  if  $radosgw_cert_file_source != undef {
-    file { $radosgw_cert_file:
-	ensure        => file,
-	owner         => $::ceph::radosgw::params::apache_user,
-  	group         => $::ceph::radosgw::params::apache_group,
-  	mode          => 640,
-  	source        => $radosgw_cert_file_source,
-	before  => File[$::ceph::radosgw::params::httpd_config_file],
-	notify  => Service['httpd'],
-    }
-  }
-
     file { $fastcgi_ext_script:
         ensure        => file,
         owner         => root,
@@ -90,30 +77,6 @@ class ceph::radosgw::apache (
         before  => File[$::ceph::radosgw::params::httpd_config_file],
 	notify  => Service['httpd'],
     }
-
-  if  $radosgw_key_file_source != undef {
-    file { $radosgw_key_file:
-        ensure        => file,
-        owner         => $::ceph::radosgw::params::apache_user,
-        group         => $::ceph::radosgw::params::apache_group,
-        mode          => 640,
-        source        => $radosgw_key_file_source,
-	before  => File[$::ceph::radosgw::params::httpd_config_file],
-	notify  => Service['httpd'],
-    }
-  }
-
-  if  $radosgw_ca_file_source != undef {
-    file { $radosgw_ca_file:
-        ensure        	=> file,
-        owner         	=> $::ceph::radosgw::params::apache_user,
-        group         	=> $::ceph::radosgw::params::apache_group,
-        mode          	=> 640,
-        source         	=> $radosgw_ca_file_source,
-	before  	=> File[$::ceph::radosgw::params::httpd_config_file],
-	notify  => Service['httpd'],
-    }
-  }
 
   file { $::ceph::radosgw::params::httpd_config_file:
     ensure  => file,
